@@ -3,11 +3,11 @@
 SET sourcepath="AshamaneCore"
 SET msbuildpath="%CD%\Tools\VisualStudio\MSBuild\15.0\Bin\msbuild.exe"
 SET repo=https://github.com/AshamaneProject/AshamaneCore.git
-SET mainfolder="%CD%"
+SET mainfolder=%CD%
 SET cmake=3.7.2
 SET arch=Win32
-SET BOOST_ROOT="%mainfolder%\Tools\boost"
-SET BOOST_LIBRARYDIR="%mainfolder%\Tools\boost\lib32-msvc-14.1"
+SET BOOST_ROOT=%mainfolder%\Tools\boost
+SET BOOST_LIBRARYDIR=%mainfolder%\Tools\boost\lib32-msvc-14.1
 
 if not exist Build mkdir Build
 if not exist Source mkdir Source
@@ -35,6 +35,7 @@ echo using own vs2017>Tools\vs_ok.txt
 goto menu
 
 :install_vs_community
+cls
 %CD%\Tools\vs_community.exe -p --installPath "%CD%\Tools\VisualStudio" --add Microsoft.VisualStudio.Component.VC.Tools.14.12 --add Microsoft.VisualStudio.Workload.NativeDesktop;includeRecommended
 echo.
 echo Restart the tool when the install is done.
@@ -56,7 +57,9 @@ echo 3 - TrinityCore Legacy  (4.3.4)
 echo 4 - AshamaneCore        (master)
 echo 5 - AzerothCore         (master)
 echo.
-echo 6 - Custom source
+echo 6 - Build custom source
+echo.
+echo 7 - Install Visual Studio 2017 Community Edition
 echo.
 set /P menu=Enter a number: 
 if "%menu%"=="1" (set id=1)
@@ -65,6 +68,7 @@ if "%menu%"=="3" (set id=3)
 if "%menu%"=="4" (set id=4)
 if "%menu%"=="5" (set id=5)
 if "%menu%"=="6" (goto custom_build_menu)
+if "%menu%"=="7" (goto install_vs_community)
 if "%menu%"=="" (goto menu)
 goto default_repos
 
@@ -219,7 +223,7 @@ echo.
 echo 1 - Win32
 echo 2 - Win64
 echo.
-set /P arch_select=Select cmake version: 
+set /P arch_select=Select architecture type: 
 if "%arch_select%"=="1" (goto arch_win32)
 if "%arch_select%"=="2" (goto arch_win64)
 if "%arch_select%"=="" (goto wrong_option)
@@ -269,7 +273,7 @@ cd Build\%sourcepath%_%archpath%
 echo.
 echo Generate cmake...
 echo.
-%mainfolder%\Tools\cmake\%cmake%\bin\cmake.exe %mainfolder%/Source/%sourcepath% -G "Visual Studio 15 2017%arch%" -DOPENSSL_ROOT_DIR=%mainfolder%/Tools/OpenSSL-%archpath% -DOPENSSL_INCLUDE_DIR=%mainfolder%/Tools/OpenSSL-%archpath%/include -DMYSQL_LIBRARY=%mainfolder%/Tools/Mariadb-%archpath%/lib/libmysql.lib -DMYSQL_INCLUDE_DIR=%mainfolder%/Tools/Mariadb-%archpath%/include/mysql
+"%mainfolder%\Tools\cmake\%cmake%\bin\cmake.exe" "%mainfolder%/Source/%sourcepath%" -G "Visual Studio 15 2017%arch%" -DOPENSSL_ROOT_DIR="%mainfolder%/Tools/OpenSSL-%archpath%" -DOPENSSL_INCLUDE_DIR="%mainfolder%/Tools/OpenSSL-%archpath%/include" -DMYSQL_LIBRARY="%mainfolder%/Tools/Mariadb-%archpath%/lib/libmysql.lib" -DMYSQL_INCLUDE_DIR="%mainfolder%/Tools/Mariadb-%archpath%/include/mysql"
 echo.
 echo Start building...
 echo.
