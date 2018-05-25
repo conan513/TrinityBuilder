@@ -13,7 +13,7 @@ SET BOOST_LIBRARYDIR=%mainfolder%\Tools\boost\lib32-msvc-14.1
 if not exist Build mkdir Build
 if not exist Source mkdir Source
 
-if exist "%CD%\vs_ok.txt" goto menu
+if exist "%CD%\Tools\vs_ok.txt" goto menu
 if not exist %msbuildpath% goto msbuild_not_found
 goto menu
 
