@@ -1,6 +1,5 @@
 @echo off
 :start
-cd ..
 SET sourcepath="AshamaneCore"
 SET msbuildpath="%CD%\Tools\VisualStudio\MSBuild\15.0\Bin\msbuild.exe"
 SET repo=https://github.com/AshamaneProject/AshamaneCore.git
