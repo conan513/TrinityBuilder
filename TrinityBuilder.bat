@@ -44,10 +44,10 @@ exit
 
 :menu
 cls
-echo #######################################################
-echo # Single Player Project - TrinityBuilder              #
-echo # https://github.com/conan513/UNRELEASED              #
-echo #######################################################
+echo #########################################################
+echo # Single Player Project - TrinityBuilder                #
+echo # https://www.patreon.com/posts/trinitybuilder-19024296 #
+echo #########################################################
 echo.
 echo ID.....[NAME]...........[BRANCH]
 echo.
