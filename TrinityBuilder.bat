@@ -8,6 +8,7 @@ SET cmake=3.7.2
 SET arch=Win32
 SET BOOST_ROOT=%mainfolder%\Tools\boost
 SET BOOST_LIBRARYDIR=%mainfolder%\Tools\boost\lib32-msvc-14.1
+SET GIT_EXECUTABLE=%mainfolder%\Tools\Git\bin
 
 if not exist Build mkdir Build
 if not exist Source mkdir Source
@@ -273,7 +274,7 @@ cd Build\%sourcepath%_%archpath%
 echo.
 echo Generate cmake...
 echo.
-"%mainfolder%\Tools\cmake\%cmake%\bin\cmake.exe" "%mainfolder%/Source/%sourcepath%" -G "Visual Studio 15 2017%arch%" -DOPENSSL_ROOT_DIR="%mainfolder%/Tools/OpenSSL-%archpath%" -DOPENSSL_INCLUDE_DIR="%mainfolder%/Tools/OpenSSL-%archpath%/include" -DMYSQL_LIBRARY="%mainfolder%/Tools/Mariadb-%archpath%/lib/libmysql.lib" -DMYSQL_INCLUDE_DIR="%mainfolder%/Tools/Mariadb-%archpath%/include/mysql"
+"%mainfolder%\Tools\cmake\%cmake%\bin\cmake.exe" "%mainfolder%/Source/%sourcepath%" -G "Visual Studio 15 2017%arch%" -DOPENSSL_ROOT_DIR="%mainfolder%/Tools/OpenSSL-%archpath%" -DOPENSSL_INCLUDE_DIR="%mainfolder%/Tools/OpenSSL-%archpath%/include" -DMYSQL_LIBRARY="%mainfolder%/Tools/Mariadb-%archpath%/lib/libmysql.lib" -DMYSQL_INCLUDE_DIR="%mainfolder%/Tools/Mariadb-%archpath%/include/mysql" -DGIT_EXECUTABLE="%mainfolder%/Tools/Git/bin/git.exe"
 echo.
 echo Start building...
 echo.
