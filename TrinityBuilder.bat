@@ -85,15 +85,36 @@ if not exist Custom\7 mkdir Custom\7
 if not exist Custom\8 mkdir Custom\8
 if not exist Custom\9 mkdir Custom\9
 
-set custom1=Empty slot
-set custom2=Empty slot
-set custom3=Empty slot
-set custom4=Empty slot
-set custom5=Empty slot
-set custom6=Empty slot
-set custom7=Empty slot
-set custom8=Empty slot
-set custom9=Empty slot
+set customname1=
+set customname2=
+set customname3=
+set customname4=
+set customname5=
+set customname6=
+set customname7=
+set customname8=
+set customname9=
+
+set customrepo1=
+set customrepo2=
+set customrepo3=
+set customrepo4=
+set customrepo5=
+set customrepo6=
+set customrepo7=
+set customrepo8=
+set customrepo9=
+
+set custombranch1=
+set custombranch2=
+set custombranch3=
+set custombranch4=
+set custombranch5=
+set custombranch6=
+set custombranch7=
+set custombranch8=
+set custombranch9=
+
 if exist custom\1\name.txt set /p customname1=<custom\1\name.txt
 if exist custom\2\name.txt set /p customname2=<custom\2\name.txt
 if exist custom\3\name.txt set /p customname3=<custom\3\name.txt
@@ -180,6 +201,17 @@ echo.
 set /P branchname=Enter the target branch name (leave empty to default): 
 if "%branchname%"=="" (goto custom_build_menu)
 echo %branchname%>custom\%customslot%\branch.txt
+goto custom_build_menu
+
+:remove_slot_menu
+cls
+set /p sourcepath=<custom\%customslot%\name.txt
+rmdir /S /Q Build\%sourcepath%_Win32
+rmdir /S /Q Build\%sourcepath%_Win64
+del custom\%customslot%\name.txt
+del custom\%customslot%\repo.txt
+del custom\%customslot%\branch.txt
+pause
 goto custom_build_menu
 
 :custom_build
