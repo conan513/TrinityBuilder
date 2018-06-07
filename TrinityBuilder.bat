@@ -208,6 +208,7 @@ cls
 set /p sourcepath=<custom\%customslot%\name.txt
 rmdir /S /Q Build\%sourcepath%_Win32
 rmdir /S /Q Build\%sourcepath%_Win64
+rmdir /S /Q Source\%sourcepath%
 del custom\%customslot%\name.txt
 del custom\%customslot%\repo.txt
 del custom\%customslot%\branch.txt
@@ -324,4 +325,5 @@ echo.
 %msbuildpath% ALL_BUILD.vcxproj /p:Configuration=Release
 echo.
 pause
+explorer bin\Release
 exit
