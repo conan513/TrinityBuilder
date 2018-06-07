@@ -212,6 +212,7 @@ if "%id%"=="5" (set branch=master)
 goto cmake_choose
 
 :cmake_choose
+cls
 echo.
 echo 1 - Cmake 3.7.2
 echo 2 - Cmake 3.11.2
