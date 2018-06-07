@@ -174,10 +174,11 @@ cls
 set /P slotname=Add a name for the selected slot: 
 echo %slotname%>custom\%customslot%\name.txt
 echo.
-set /P repoaddress=Enter the source repo address:
+set /P repoaddress=Enter the source repo address: 
 echo %repoaddress%>custom\%customslot%\repo.txt
 echo.
-set /P branchname=Enter the target branch name (leave empty to default):
+set /P branchname=Enter the target branch name (leave empty to default): 
+if "%branchname%"=="" (goto custom_build_menu)
 echo %branchname%>custom\%customslot%\branch.txt
 goto custom_build_menu
 
@@ -241,8 +242,6 @@ set archpath=Win64
 SET BOOST_LIBRARYDIR=%mainfolder%\Tools\boost\lib64-msvc-14.1
 goto git_clone
 
-goto git_clone
-
 :wrong_option
 echo.
 echo You selected a wrong option.
@@ -256,12 +255,23 @@ cls
 if exist Source\%sourcepath%\README.md goto git_pull
 echo Get the source from %repo% %branch%
 echo.
+if exist custom\%customslot%\branch.txt goto git_clone_branch
+Tools\Git\bin\git.exe clone %repo% Source/%sourcepath%
+
+:git_clone_branch
 Tools\Git\bin\git.exe clone %repo% -b %branch% Source/%sourcepath%
 
 :git_pull
 echo.
 echo Pull the commits from %repo%
 echo.
+if exist custom\%customslot%\branch.txt goto git_pull_branch
+cd Source\%sourcepath%
+%mainfolder%\Tools\Git\bin\git.exe pull %repo% %branch%
+cd %mainfolder%
+goto build
+
+:git_pull_branch
 cd Source\%sourcepath%
 %mainfolder%\Tools\Git\bin\git.exe pull %repo% %branch%
 cd %mainfolder%
