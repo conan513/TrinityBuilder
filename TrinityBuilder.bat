@@ -50,17 +50,19 @@ echo # Single Player Project - TrinityBuilder                #
 echo # https://www.patreon.com/posts/trinitybuilder-19024296 #
 echo #########################################################
 echo.
-echo ID.....[NAME]...........[BRANCH]
+echo ID.....[NAME]...........[BRANCH].....[DESCRIPTION]
 echo.
-echo 1 - TrinityCore         (3.3.5)
-echo 2 - TrinityCore         (master)
-echo 3 - TrinityCore Legacy  (4.3.4)
-echo 4 - AshamaneCore        (master)
-echo 5 - AzerothCore         (master)
+echo 1 - TrinityCore         (3.3.5)      TrinityCore for WoTLK
+echo 2 - TrinityCore         (master)     TrinityCore for Legion
+echo 3 - TrinityCore Legacy  (4.3.4)      Custom TrinityCore for Cataclysm from Ovahlord
+echo 4 - AshamaneCore        (master)     Custom TrinityCore for Legion from Traesh
+echo 5 - AzerothCore         (master)     Custom TrinityCore for WoTLK
+echo 6 - MangosBot-Zero      (master)     Custom MaNGOS for Vanilla with Playerbots from Ike3
+echo 7 - MangosBot-One       (master)     Custom MaNGOS for BC with Playerbots from Lidocain
 echo.
-echo 6 - Build custom source
+echo 8 - Build custom source
 echo.
-echo 7 - Install Visual Studio 2017 Community Edition
+echo 9 - Install Visual Studio 2017 Community Edition
 echo.
 set /P menu=Enter a number: 
 if "%menu%"=="1" (set id=1)
@@ -68,8 +70,10 @@ if "%menu%"=="2" (set id=2)
 if "%menu%"=="3" (set id=3)
 if "%menu%"=="4" (set id=4)
 if "%menu%"=="5" (set id=5)
-if "%menu%"=="6" (goto custom_build_menu)
-if "%menu%"=="7" (goto install_vs_community)
+if "%menu%"=="6" (set id=6)
+if "%menu%"=="7" (set id=7)
+if "%menu%"=="8" (goto custom_build_menu)
+if "%menu%"=="9" (goto install_vs_community)
 if "%menu%"=="" (goto menu)
 goto default_repos
 
@@ -242,6 +246,14 @@ if "%id%"=="4" (set branch=master)
 if "%id%"=="5" (set sourcepath="AzerothCore")
 if "%id%"=="5" (set repo=https://github.com/azerothcore/azerothcore-wotlk.git)
 if "%id%"=="5" (set branch=master)
+
+if "%id%"=="6" (set sourcepath="MangosBot-Zero")
+if "%id%"=="6" (set repo=https://github.com/ike3/mangosbot-zero.git)
+if "%id%"=="6" (set branch=mangos-zero-ai)
+
+if "%id%"=="7" (set sourcepath="MangosBot-One")
+if "%id%"=="7" (set repo=https://github.com/Lidocian/OnebotS.git)
+if "%id%"=="7" (set branch=master)
 goto cmake_choose
 
 :cmake_choose
@@ -290,35 +302,41 @@ if exist Source\%sourcepath%\README.md goto git_pull
 echo Get the source from %repo% %branch%
 echo.
 if exist custom\%customslot%\branch.txt goto git_clone_branch
-Tools\Git\bin\git.exe clone %repo% Source/%sourcepath%
-
-:git_clone_branch
-Tools\Git\bin\git.exe clone %repo% -b %branch% Source/%sourcepath%
+%mainfolder%\Tools\Git\bin\git.exe clone %repo% Source/%sourcepath%
+echo.
+echo Downloading submodules if available...
+echo.
+cd %mainfolder%\Source\%sourcepath%
+%mainfolder%\Tools\Git\bin\git.exe submodule update --init --recursive
+cd %mainfolder%
 
 :git_pull
 echo.
 echo Pull the commits from %repo%
 echo.
-if exist custom\%customslot%\branch.txt goto git_pull_branch
-cd Source\%sourcepath%
+if exist %mainfolder%custom\%customslot%\branch.txt goto git_pull_branch
+cd %mainfolder%\Source\%sourcepath%
 %mainfolder%\Tools\Git\bin\git.exe pull %repo% %branch%
-cd %mainfolder%
-goto build
+echo.
+echo Updating submodules if available...
+echo.
+%mainfolder%\Tools\Git\bin\git.exe submodule update --init --recursive
+%mainfolder%\Tools\Git\bin\git.exe submodule update --recursive --remote
 
-:git_pull_branch
-cd Source\%sourcepath%
-%mainfolder%\Tools\Git\bin\git.exe pull %repo% %branch%
+if "%id%"=="6" (%mainfolder%\Tools\wget --no-check-certificate https://raw.githubusercontent.com/conan513/TrinityBuilder/master/Fixes/mangosbot-zero/.gitmodules)
+del %CD%\gitmodules
+move %CD%\.gitmodules.1 %CD%\.gitmodules
+
 cd %mainfolder%
 goto build
 
 :build
-cls
 mkdir Build\%sourcepath%_%archpath%
 cd Build\%sourcepath%_%archpath%
 echo.
 echo Generate cmake...
 echo.
-"%mainfolder%\Tools\cmake\%cmake%\bin\cmake.exe" "%mainfolder%/Source/%sourcepath%" -G "Visual Studio 15 2017%arch%" -DOPENSSL_ROOT_DIR="%mainfolder%/Tools/OpenSSL-%archpath%" -DOPENSSL_INCLUDE_DIR="%mainfolder%/Tools/OpenSSL-%archpath%/include" -DMYSQL_LIBRARY="%mainfolder%/Tools/Mariadb-%archpath%/lib/libmysql.lib" -DMYSQL_INCLUDE_DIR="%mainfolder%/Tools/Mariadb-%archpath%/include/mysql" -DGIT_EXECUTABLE="%mainfolder%/Tools/Git/bin/git.exe" -DTOOLS=1
+"%mainfolder%\Tools\cmake\%cmake%\bin\cmake.exe" "%mainfolder%/Source/%sourcepath%" -G "Visual Studio 15 2017%arch%" -DOPENSSL_ROOT_DIR="%mainfolder%/Tools/OpenSSL-%archpath%" -DOPENSSL_INCLUDE_DIR="%mainfolder%/Tools/OpenSSL-%archpath%/include" -DMYSQL_LIBRARY="%mainfolder%/Tools/Mariadb-%archpath%/lib/libmysql.lib" -DMYSQL_INCLUDE_DIR="%mainfolder%/Tools/Mariadb-%archpath%/include/mysql" -DGIT_EXECUTABLE="%mainfolder%/Tools/Git/bin/git.exe" -DTOOLS=1 -DPLAYERBOT=1 -DPLAYERBOTS=1 -DSCRIPT_LIB_ELUNA=0 -DELUNA=0
 echo.
 echo Start building...
 echo.
