@@ -296,6 +296,13 @@ echo.
 pauese
 goto menu
 
+:fix_modules_one
+%mainfolder%\Tools\wget --no-check-certificate https://raw.githubusercontent.com/conan513/TrinityBuilder/master/Fixes/mangosbot-zero/.gitmodules)
+del %CD%\gitmodules
+move %CD%\.gitmodules.1 %CD%\.gitmodules
+cd %mainfolder%
+goto build
+
 :git_clone
 cls
 if exist Source\%sourcepath%\README.md goto git_pull
@@ -322,10 +329,7 @@ echo Updating submodules if available...
 echo.
 %mainfolder%\Tools\Git\bin\git.exe submodule update --init --recursive
 %mainfolder%\Tools\Git\bin\git.exe submodule update --recursive --remote
-
-if "%id%"=="6" (%mainfolder%\Tools\wget --no-check-certificate https://raw.githubusercontent.com/conan513/TrinityBuilder/master/Fixes/mangosbot-zero/.gitmodules)
-del %CD%\gitmodules
-move %CD%\.gitmodules.1 %CD%\.gitmodules
+if "%id%"=="6" (goto fix_modules_one)
 
 cd %mainfolder%
 goto build
