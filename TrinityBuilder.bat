@@ -46,7 +46,7 @@ exit
 :menu
 cls
 echo #########################################################
-echo # Single Player Project - TrinityBuilder                #
+echo # Single Player Project - TrinityBuilder (V2)           #
 echo # https://www.patreon.com/posts/trinitybuilder-19024296 #
 echo #########################################################
 echo.
