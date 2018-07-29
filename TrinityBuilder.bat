@@ -267,12 +267,45 @@ if "%cmake_select%"=="1" (set cmake=3.7.2)
 if "%cmake_select%"=="2" (set cmake=3.11.2)
 if "%cmake_select%"=="" (goto wrong_option)
 
+:openssl_choose
+echo.
+echo 1 - OpenSSL 1.0.2
+echo 2 - OpenSSL 1.1.0
+echo.
+set /P openssl_select=Select cmake version: 
+if "%openssl_select%"=="1" (set openssl=OpenSSL)
+if "%openssl_select%"=="2" (set openssl=OpenSSL110)
+if "%openssl_select%"=="" (goto wrong_option)
+
+:mysql_choose
+echo.
+echo 1 - MariaDB 10.1.34
+echo 2 - MySQL 8.0.12 (x64 only)
+echo.
+set /P mariadb_select=Select cmake version: 
+if "%mariadb_select%"=="1" (set mariadb=MariaDB-10.1.34)
+if "%mariadb_select%"=="2" (set mariadb=MySQL-8.0.12)
+if "%mariadb_select%"=="" (goto wrong_option)
+
+if "%mariadb_select%"=="2" (goto arch_choose_x64_only)
+
+:arch_choose
 echo.
 echo 1 - Win32
 echo 2 - Win64
 echo.
 set /P arch_select=Select architecture type: 
 if "%arch_select%"=="1" (goto arch_win32)
+if "%arch_select%"=="2" (goto arch_win64)
+if "%arch_select%"=="" (goto wrong_option)
+
+:arch_choose_x64_only
+echo.
+echo 1 - Win32 (not usable with MySQL)
+echo 2 - Win64
+echo.
+set /P arch_select=Select architecture type: 
+if "%arch_select%"=="1" (goto wrong_option)
 if "%arch_select%"=="2" (goto arch_win64)
 if "%arch_select%"=="" (goto wrong_option)
 
@@ -340,7 +373,7 @@ cd Build\%sourcepath%_%archpath%
 echo.
 echo Generate cmake...
 echo.
-"%mainfolder%\Tools\cmake\%cmake%\bin\cmake.exe" "%mainfolder%/Source/%sourcepath%" -G "Visual Studio 15 2017%arch%" -DOPENSSL_ROOT_DIR="%mainfolder%/Tools/OpenSSL-%archpath%" -DOPENSSL_INCLUDE_DIR="%mainfolder%/Tools/OpenSSL-%archpath%/include" -DMYSQL_LIBRARY="%mainfolder%/Tools/Mariadb-%archpath%/lib/libmysql.lib" -DMYSQL_INCLUDE_DIR="%mainfolder%/Tools/Mariadb-%archpath%/include/mysql" -DGIT_EXECUTABLE="%mainfolder%/Tools/Git/bin/git.exe" -DTOOLS=1 -DPLAYERBOT=1 -DPLAYERBOTS=1 -DSCRIPT_LIB_ELUNA=0 -DELUNA=0
+"%mainfolder%\Tools\cmake\%cmake%\bin\cmake.exe" "%mainfolder%/Source/%sourcepath%" -G "Visual Studio 15 2017%arch%" -DOPENSSL_ROOT_DIR="%mainfolder%/Tools/%openssl%-%archpath%" -DOPENSSL_INCLUDE_DIR="%mainfolder%/Tools/%openssl%-%archpath%/include" -DMYSQL_LIBRARY="%mainfolder%/Tools/%mariadb%-%archpath%/lib/libmysql.lib" -DMYSQL_INCLUDE_DIR="%mainfolder%/Tools/%mariadb%-%archpath%/include/mysql" -DGIT_EXECUTABLE="%mainfolder%/Tools/Git/bin/git.exe" -DTOOLS=1 -DPLAYERBOT=1 -DPLAYERBOTS=1 -DSCRIPT_LIB_ELUNA=0 -DELUNA=0
 echo.
 echo Start building...
 echo.
