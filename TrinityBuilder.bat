@@ -338,25 +338,49 @@ goto build
 
 :git_clone
 cls
-if exist Source\%sourcepath%\README.md goto git_pull
+if exist %mainfolder%\Source\%sourcepath%\README.md goto git_pull
 echo Get the source from %repo% %branch%
 echo.
-if exist custom\%customslot%\branch.txt goto git_clone_branch
-%mainfolder%\Tools\Git\bin\git.exe clone %repo% Source/%sourcepath%
+if exist %mainfolder%\custom\%customslot%\branch.txt goto git_clone_branch
+%mainfolder%\Tools\Git\bin\git.exe clone %repo% %mainfolder%/Source/%sourcepath%
+goto git_clone_finish
+
+:git_clone_branch
+%mainfolder%\Tools\Git\bin\git.exe clone %repo% --single-branch -b %branch% %mainfolder%/Source/%sourcepath%
+goto git_clone_finish
+
+:git_clone_finish
 echo.
 echo Downloading submodules if available...
 echo.
 cd %mainfolder%\Source\%sourcepath%
+if exist %mainfolder%\Source\%sourcepath%\sql\scriptdev2\scriptdev2.sql goto fix_cmangos_ike3_modules
 %mainfolder%\Tools\Git\bin\git.exe submodule update --init --recursive
 cd %mainfolder%
+goto git_pull
 
 :git_pull
 echo.
-echo Pull the commits from %repo%
+echo Pull the commits from %repo% %branch%
 echo.
-if exist %mainfolder%custom\%customslot%\branch.txt goto git_pull_branch
 cd %mainfolder%\Source\%sourcepath%
+if exist %mainfolder%\custom\%customslot%\branch.txt goto git_pull_branch
+%mainfolder%\Tools\Git\bin\git.exe pull %repo%
+goto git_pull_finish
+
+:git_pull_branch
 %mainfolder%\Tools\Git\bin\git.exe pull %repo% %branch%
+goto git_pull_finish
+
+:fix_cmangos_ike3_modules
+%mainfolder%\Tools\wget --no-check-certificate https://raw.githubusercontent.com/conan513/TrinityBuilder/v2/Fixes/cmangos-ike3/.gitmodules
+del %CD%\gitmodules
+move %CD%\.gitmodules.1 %CD%\.gitmodules
+%mainfolder%\Tools\Git\bin\git.exe submodule update --init --recursive
+cd %mainfolder%
+goto git_pull
+
+:git_pull_finish
 echo.
 echo Updating submodules if available...
 echo.
@@ -373,12 +397,17 @@ cd Build\%sourcepath%_%archpath%
 echo.
 echo Generate cmake...
 echo.
-"%mainfolder%\Tools\cmake\%cmake%\bin\cmake.exe" "%mainfolder%/Source/%sourcepath%" -G "Visual Studio 15 2017%arch%" -DOPENSSL_ROOT_DIR="%mainfolder%/Tools/%openssl%-%archpath%" -DOPENSSL_INCLUDE_DIR="%mainfolder%/Tools/%openssl%-%archpath%/include" -DMYSQL_LIBRARY="%mainfolder%/Tools/%mariadb%-%archpath%/lib/libmysql.lib" -DMYSQL_INCLUDE_DIR="%mainfolder%/Tools/%mariadb%-%archpath%/include/mysql" -DGIT_EXECUTABLE="%mainfolder%/Tools/Git/bin/git.exe" -DTOOLS=1 -DPLAYERBOT=1 -DPLAYERBOTS=1 -DSCRIPT_LIB_ELUNA=0 -DELUNA=0
+"%mainfolder%\Tools\cmake\%cmake%\bin\cmake.exe" "%mainfolder%/Source/%sourcepath%" -G "Visual Studio 15 2017%arch%" -DOPENSSL_ROOT_DIR="%mainfolder%/Tools/%openssl%-%archpath%" -DOPENSSL_INCLUDE_DIR="%mainfolder%/Tools/%openssl%-%archpath%/include" -DMYSQL_LIBRARY="%mainfolder%/Tools/%mariadb%-%archpath%/lib/libmysql.lib" -DMYSQL_INCLUDE_DIR="%mainfolder%/Tools/%mariadb%-%archpath%/include/mysql" -DGIT_EXECUTABLE="%mainfolder%/Tools/Git/bin/git.exe" -DTOOLS=1 -DPLAYERBOT=1 -DPLAYERBOTS=1 -DSCRIPT_LIB_ELUNA=0 -DELUNA=0 -DBUILD_EXTRACTORS=1
 echo.
 echo Start building...
 echo.
 %msbuildpath% ALL_BUILD.vcxproj /p:Configuration=Release
 echo.
 pause
+if exist "%mainfolder%\Source\%sourcepath%\sql\scriptdev2\scriptdev2.sql" goto cmangos_folder
 explorer bin\Release
+exit
+
+:cmangos_folder
+explorer "%mainfolder%\Source\%sourcepath%\bin"
 exit
