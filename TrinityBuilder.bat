@@ -49,8 +49,8 @@ exit
 :menu
 cls
 echo #########################################################
-echo # Single Player Project - TrinityBuilder (V2)           #
-echo # https://www.patreon.com/posts/trinitybuilder-19024296 #
+echo # Single Player Project - TrinityBuilder (V3)           #
+echo # https://www.patreon.com/conan513                      #
 echo #########################################################
 echo.
 echo ID.....[NAME]...........[BRANCH].....[DESCRIPTION]
