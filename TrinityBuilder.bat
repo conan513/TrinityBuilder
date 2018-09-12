@@ -5,15 +5,18 @@ SET msbuildpath="%CD%\Tools\VisualStudio\MSBuild\15.0\Bin\msbuild.exe"
 SET repo=https://github.com/AshamaneProject/AshamaneCore.git
 SET mainfolder=%CD%
 SET cmake=3.7.2
+SET cmake_latest=3.12.2
+SET mariadb_version=10.1.36
 SET arch=Win32
 SET BOOST_ROOT=%mainfolder%\Tools\boost
 SET BOOST_LIBRARYDIR=%mainfolder%\Tools\boost\lib32-msvc-14.1
 SET GIT_EXECUTABLE=%mainfolder%\Tools\Git\bin
+SET dynamic_linking=1
 
 if not exist Build mkdir Build
 if not exist Source mkdir Source
 
-if exist "Tools\vs_ok.txt" goto menu
+if exist "%mainfolder%\Tools\vs_ok.txt" goto menu
 if not exist %msbuildpath% goto msbuild_not_found
 goto menu
 
@@ -25,7 +28,7 @@ echo.
 echo Do you want to install Visual Studio 2017 Community Edition or want to use your own Visual Studio?
 echo.
 echo 1 - Install Visual Studio 2017 Community Edition (recommend)
-echo 2 - Use my pre installed Visual Studio 2017
+echo 2 - Use my pre-installed Visual Studio 2017
 echo.
 set /P menu=Enter a number: 
 if "%menu%"=="1" (goto install_vs_community)
@@ -260,11 +263,11 @@ goto cmake_choose
 cls
 echo.
 echo 1 - Cmake 3.7.2
-echo 2 - Cmake 3.11.2
+echo 2 - Cmake %cmake_latest%
 echo.
 set /P cmake_select=Select cmake version: 
 if "%cmake_select%"=="1" (set cmake=3.7.2)
-if "%cmake_select%"=="2" (set cmake=3.11.2)
+if "%cmake_select%"=="2" (set cmake=%cmake_latest%)
 if "%cmake_select%"=="" (goto wrong_option)
 
 :openssl_choose
@@ -273,17 +276,17 @@ echo 1 - OpenSSL 1.0.2
 echo 2 - OpenSSL 1.1.0
 echo.
 set /P openssl_select=Select cmake version: 
-if "%openssl_select%"=="1" (set openssl=OpenSSL)
-if "%openssl_select%"=="2" (set openssl=OpenSSL110)
+if "%openssl_select%"=="1" (set openssl=1.0.2)
+if "%openssl_select%"=="2" (set openssl=1.1.0)
 if "%openssl_select%"=="" (goto wrong_option)
 
 :mysql_choose
 echo.
-echo 1 - MariaDB 10.1.34
+echo 1 - MariaDB %mariadb_version%
 echo 2 - MySQL 8.0.12 (x64 only)
 echo.
 set /P mariadb_select=Select cmake version: 
-if "%mariadb_select%"=="1" (set mariadb=MariaDB-10.1.34)
+if "%mariadb_select%"=="1" (set mariadb=MariaDB-%mariadb_version%)
 if "%mariadb_select%"=="2" (set mariadb=MySQL-8.0.12)
 if "%mariadb_select%"=="" (goto wrong_option)
 
@@ -395,17 +398,36 @@ goto build
 mkdir Build\%sourcepath%_%archpath%
 cd Build\%sourcepath%_%archpath%
 echo.
+echo Checking core to create compatible cmake options...
+echo.
+if exist "%mainfolder%\Source\%sourcepath%\contrib\sunstrider\generate_script_loader.php" SET dynamic_linking=0
+echo.
 echo Generate cmake...
 echo.
-"%mainfolder%\Tools\cmake\%cmake%\bin\cmake.exe" "%mainfolder%/Source/%sourcepath%" -G "Visual Studio 15 2017%arch%" -DOPENSSL_ROOT_DIR="%mainfolder%/Tools/%openssl%-%archpath%" -DOPENSSL_INCLUDE_DIR="%mainfolder%/Tools/%openssl%-%archpath%/include" -DMYSQL_LIBRARY="%mainfolder%/Tools/%mariadb%-%archpath%/lib/libmysql.lib" -DMYSQL_INCLUDE_DIR="%mainfolder%/Tools/%mariadb%-%archpath%/include/mysql" -DGIT_EXECUTABLE="%mainfolder%/Tools/Git/bin/git.exe" -DTOOLS=1 -DPLAYERBOT=1 -DPLAYERBOTS=1 -DSCRIPT_LIB_ELUNA=0 -DELUNA=0 -DBUILD_EXTRACTORS=1 -DWITH_CPR=1 -DWITH_DYNAMIC_LINKING=1 -DSCRIPTS=static
+"%mainfolder%\Tools\cmake\%cmake%\bin\cmake.exe" "%mainfolder%/Source/%sourcepath%" -G "Visual Studio 15 2017%arch%" -DOPENSSL_ROOT_DIR="%mainfolder%/Tools/openssl/%openssl%-%archpath%" -DOPENSSL_INCLUDE_DIR="%mainfolder%/Tools/openssl/%openssl%-%archpath%/include" -DMYSQL_LIBRARY="%mainfolder%/Tools/database/%mariadb%-%archpath%/lib/libmysql.lib" -DMYSQL_INCLUDE_DIR="%mainfolder%/Tools/database/%mariadb%-%archpath%/include/mysql" -DGIT_EXECUTABLE="%mainfolder%/Tools/Git/bin/git.exe" -DTOOLS=1 -DPLAYERBOT=1 -DPLAYERBOTS=1 -DSCRIPT_LIB_ELUNA=0 -DELUNA=0 -DBUILD_EXTRACTORS=1 -DWITH_CPR=1 -DWITH_DYNAMIC_LINKING=%dynamic_linking% -DSCRIPTS=static
 echo.
 echo Start building...
 echo.
+if exist "%mainfolder%\Tools\vs_ok.txt" goto manual_vs_build
 %msbuildpath% ALL_BUILD.vcxproj /p:Configuration=Release
+echo.
+echo Copy required dll files into bin folder
+if "%arch_select%"=="1" (copy "%mainfolder%\Tools\dll\bin\*.dll" bin\Release)
+if "%arch_select%"=="2" (copy "%mainfolder%\Tools\dll\bin64\*.dll" bin\Release)
 echo.
 pause
 if exist "%mainfolder%\Source\%sourcepath%\sql\scriptdev2\scriptdev2.sql" goto cmangos_folder
 explorer bin\Release
+exit
+
+:manual_vs_build
+cls
+echo.
+echo You have selected pre-installed Visual Studio 2017.
+echo Visual Studio opening soon and please run the build process manually.
+echo.
+ping -n 10 127.0.0.1>nul
+SingleCore_Legion.sln
 exit
 
 :cmangos_folder
