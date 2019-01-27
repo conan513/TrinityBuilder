@@ -292,6 +292,12 @@ if "%mariadb_select%"=="" (goto wrong_option)
 
 if "%mariadb_select%"=="2" (goto arch_choose_x64_only)
 
+:cpu_cores
+echo.
+echo How many CPU core(s) you want to use for compile?
+echo.
+set /P cpu_cores=Enter a number: 
+
 :arch_choose
 echo.
 echo 1 - Win32
@@ -409,7 +415,7 @@ echo.
 echo Start building...
 echo.
 if exist "%mainfolder%\Tools\vs_ok.txt" goto manual_vs_build
-%msbuildpath% ALL_BUILD.vcxproj /p:Configuration=Release
+%msbuildpath% /p:CL_MPCount=%cpu_cores% ALL_BUILD.vcxproj /p:Configuration=Release
 echo.
 echo Copy required dll files into bin folder
 if "%arch_select%"=="1" (copy "%mainfolder%\Tools\dll\bin\*.dll" bin\Release)
