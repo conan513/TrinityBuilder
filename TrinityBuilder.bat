@@ -292,12 +292,6 @@ if "%mariadb_select%"=="" (goto wrong_option)
 
 if "%mariadb_select%"=="2" (goto arch_choose_x64_only)
 
-:cpu_cores
-echo.
-echo How many CPU core(s) you want to use for compile?
-echo.
-set /P cpu_cores=Enter a number: 
-
 :arch_choose
 echo.
 echo 1 - Win32
@@ -319,12 +313,16 @@ if "%arch_select%"=="2" (goto arch_win64)
 if "%arch_select%"=="" (goto wrong_option)
 
 :arch_win32
+echo.
+set /P cpu_cores=How many CPU core(s) you want to use for compile: 
 set arch=
 set archpath=Win32
 SET BOOST_LIBRARYDIR=%mainfolder%\Tools\boost\lib32-msvc-14.1
 goto git_clone
 
 :arch_win64
+echo.
+set /P cpu_cores=How many CPU core(s) you want to use for compile: 
 set arch= Win64
 set archpath=Win64
 SET BOOST_LIBRARYDIR=%mainfolder%\Tools\boost\lib64-msvc-14.1
