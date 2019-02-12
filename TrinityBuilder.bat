@@ -11,7 +11,7 @@ SET arch=Win32
 SET BOOST_ROOT=%mainfolder%\Tools\boost
 SET BOOST_LIBRARYDIR=%mainfolder%\Tools\boost\lib32-msvc-14.1
 SET GIT_EXECUTABLE=%mainfolder%\Tools\Git\bin
-SET dynamic_linking=1
+SET dynamic_linking=0
 
 if not exist Build mkdir Build
 if not exist Source mkdir Source
