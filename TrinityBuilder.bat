@@ -401,6 +401,7 @@ cd %mainfolder%
 goto build
 
 :build
+del "%mainfolder%\Source\%sourcepath%\src\modules\Bots\botpch.pch"
 mkdir Build\%sourcepath%_%archpath%
 cd Build\%sourcepath%_%archpath%
 echo.
