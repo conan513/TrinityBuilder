@@ -125,7 +125,7 @@ ping -n 10 127.0.0.1>nul
 goto menu
 
 :build
-cls
+echo.
 set /P cpu_cores=How many CPU core(s) you want to use for compile: 
 mkdir "%mainfolder%\Build\%sourcepath%_%archpath%"
 cd "%mainfolder%\Build\%sourcepath%_%archpath%"
