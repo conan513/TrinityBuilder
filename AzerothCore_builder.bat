@@ -112,12 +112,11 @@ echo 2 - Open the modules folder
 echo.
 set /P choose_menu=Choose a number: 
 if "%choose_menu%"=="1" (goto build)
-if "%choose_menu%"=="2" (goto setup_tbc)
+if "%choose_menu%"=="2" (goto open_modules)
 if "%choose_menu%"=="" (goto menu)
-set /P cpu_cores=How many CPU core(s) you want to use for compile: 
 goto open_modules
 
-:setup_tbc
+:open_modules
 cls
 echo Copy AzerothCore module folders here.
 echo.
@@ -127,6 +126,7 @@ goto menu
 
 :build
 cls
+set /P cpu_cores=How many CPU core(s) you want to use for compile: 
 mkdir "%mainfolder%\Build\%sourcepath%_%archpath%"
 cd "%mainfolder%\Build\%sourcepath%_%archpath%"
 echo.
