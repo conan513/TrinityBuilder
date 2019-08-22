@@ -16,6 +16,7 @@ set branch=master
 set arch=
 set archpath=Win32
 
+rmdir /Q /S "%mainfolder%\Build"
 mkdir "%mainfolder%\Repack"
 mkdir "%mainfolder%\Repack\Database"
 mkdir "%mainfolder%\Repack\dbc"
