@@ -178,7 +178,7 @@ goto finalize_db
 
 :finalize_db
 cd "%mainfolder%\Repack"
-start "" "%mainfolder%\Repack\Database.bat"
+start /MIN "" "%mainfolder%\Repack\Database.bat"
 ping -n 10 127.0.0.1>nul
 goto db_select
 
