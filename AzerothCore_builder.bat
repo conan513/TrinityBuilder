@@ -105,7 +105,7 @@ cd "%mainfolder%"
 cls
 echo #######################################################
 echo # Single Player Project - AzerothCore repack builder
-echo # https://www.patreon.com/conan513                    
+echo # https://spp-forum.de
 echo #######################################################
 echo.
 echo 1 - Start the build process
