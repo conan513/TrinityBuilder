@@ -264,6 +264,7 @@ start /b /w vmap4extractor.exe
 start /b /w vmap4assembler.exe Buildings vmaps
 start /b /w mmaps_generator.exe
 
+%mainfolder:~0,1%:
 cd "%mainfolder%"
 
 xcopy /s "%wow_path%\dbc" "%mainfolder%\Repack\dbc"
