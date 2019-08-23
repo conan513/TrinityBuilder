@@ -251,6 +251,7 @@ copy "%mainfolder%\Build\%sourcepath%_%archpath%\bin\release\vmap4assembler.exe"
 copy "%mainfolder%\Build\%sourcepath%_%archpath%\bin\release\vmap4extractor.exe" "%wow_path%" /Y
 copy "%mainfolder%\Build\%sourcepath%_%archpath%\bin\release\ace.dll" "%wow_path%" /Y
 copy "%mainfolder%\Build\%sourcepath%_%archpath%\bin\release\%database_lib%.dll" "%wow_path%" /Y
+%wow_path:~0,1%:
 cd "%wow_path%"
 cls
 mkdir dbc
