@@ -238,7 +238,8 @@ echo Enter 0 to skip this process.
 echo.
 set /P wow_path=Path: 
 if "%wow_path%"=="0" (goto end)
-if "%wow_path%"=="" (goto extract_data)
+if "%wow_path%"=="" (goto finish)
+goto extract_data
 
 :extract_data
 cls
