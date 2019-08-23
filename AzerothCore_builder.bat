@@ -267,10 +267,10 @@ start /b /w mmaps_generator.exe
 %mainfolder:~0,1%:
 cd "%mainfolder%"
 
-xcopy /s "%wow_path%\dbc" "%mainfolder%\Repack\dbc"
-xcopy /s "%wow_path%\maps" "%mainfolder%\Repack\maps"
-xcopy /s "%wow_path%\vmaps" "%mainfolder%\Repack\vmaps"
-xcopy /s "%wow_path%\mmaps" "%mainfolder%\Repack\mmaps"
+xcopy /s "%wow_path%\dbc" "%mainfolder%\Repack\dbc" /Y
+xcopy /s "%wow_path%\maps" "%mainfolder%\Repack\maps" /Y
+xcopy /s "%wow_path%\vmaps" "%mainfolder%\Repack\vmaps" /Y
+xcopy /s "%wow_path%\mmaps" "%mainfolder%\Repack\mmaps" /Y
 
 if exist "%wow_path%\Data\enUS\realmlist.wtf" echo set realmlist 127.0.0.1>"%wow_path%\Data\enUS\realmlist.wtf"
 goto end
