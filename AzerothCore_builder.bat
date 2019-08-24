@@ -16,6 +16,9 @@ set branch=master
 set arch=
 set archpath=Win32
 
+:beginning
+cd "%mainfolder%"
+mkdir"%mainfolder%\Tools\modules"
 rmdir /Q /S "%mainfolder%\Build"
 mkdir "%mainfolder%\Repack"
 mkdir "%mainfolder%\Repack\Database"
@@ -30,20 +33,6 @@ if not exist Source mkdir Source
 if exist "%mainfolder%\Tools\vs_ok.txt" goto git_clone
 if not exist %msbuildpath% goto install_vs_community
 goto git_clone
-
-:msbuild_not_found
-cls
-echo MSBuild.exe not found here: 
-echo %msbuildpath%
-echo.
-echo Do you have Visual Studio 2017 on your PC?
-echo.
-echo 1 - No, please install Visual Studio 2017 Community Edition (recommend)
-echo 2 - Yes
-echo.
-set /P menu=Enter a number: 
-if "%menu%"=="1" (goto install_vs_community)
-if "%menu%"=="2" (goto vs_use_own)
 
 :vs_use_own
 echo using own vs2017>Tools\vs_ok.txt
@@ -102,25 +91,67 @@ goto menu
 
 :menu
 cd "%mainfolder%"
+if exist "%mainfolder%\Source\%sourcepath%\sololfg.txt" set sololfg_status=Installed
+if not exist "%mainfolder%\Source\%sourcepath%\sololfg.txt" set sololfg_status=Not installed
 cls
 echo #######################################################
-echo # Single Player Project - AzerothCore repack builder
+echo # Single Player Project - %sourcepath% repack builder
 echo # https://spp-forum.de
 echo #######################################################
 echo.
 echo 1 - Start the build process
 echo 2 - Open the modules folder
+echo 0 - Delete local %sourcepath% source (reinstall)
+echo.
+echo ---[ CUSTOM STUFF ]---
+echo.
+echo 3 - SoloLFG (%sololfg_status%)
 echo.
 set /P choose_menu=Choose a number: 
 if "%choose_menu%"=="1" (goto build)
 if "%choose_menu%"=="2" (goto open_modules)
+if "%choose_menu%"=="3" (goto install_sololfg)
+if "%choose_menu%"=="0" (goto reinstall_source)
 if "%choose_menu%"=="" (goto menu)
 goto open_modules
+
+:install_sololfg
+if exist "%mainfolder%\Source\%sourcepath%\sololfg.txt" goto sololfg_installed
+cd "%mainfolder%\Source\%sourcepath%"
+cls
+echo Downloading SoloLFG source into %sourcepath%...
+echo.
+"%mainfolder%\Tools\Git\bin\git.exe" fetch https://github.com/SinglePlayerProject/azerothcore-wotlk.git lfg.solomode
+"%mainfolder%\Tools\Git\bin\git.exe" cherry-pick d89092f148c0623f665d8285334df33c492d593a
+echo.
+echo SoloLFG mode added into %sourcepath%.
+echo SoloLFG>"%mainfolder%\Source\%sourcepath%\sololfg.txt"
+echo.
+ping -n 5 127.0.0.1>nul
+goto menu
+
+:sololfg_installed
+cls
+echo SoloLFG code already included in the local %sourcepath% code.
+echo.
+ping -n 5 127.0.0.1>nul
+goto menu
+
+:reinstall_source
+cls
+echo Deleting the local %sourcepath% source...
+echo.
+rmdir /Q /S "%mainfolder%\Source\%sourcepath%"
+echo.
+echo %sourcepath% source deleted, starting download the fresh source...
+echo.
+ping -n 5 127.0.0.1>nul
+goto beginning
 
 :open_modules
 start "" http://www.azerothcore.org/modules-catalogue/
 cls
-echo Copy AzerothCore module folders here.
+echo Copy %sourcepath% module folders here.
 echo.
 explorer "%mainfolder%\Source\%sourcepath%\modules"
 ping -n 10 127.0.0.1>nul
