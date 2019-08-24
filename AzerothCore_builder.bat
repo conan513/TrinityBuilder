@@ -118,6 +118,7 @@ if "%choose_menu%"=="" (goto menu)
 goto open_modules
 
 :open_modules
+start "" http://www.azerothcore.org/modules-catalogue/
 cls
 echo Copy AzerothCore module folders here.
 echo.
