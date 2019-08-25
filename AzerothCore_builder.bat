@@ -316,8 +316,7 @@ copy "%mainfolder%\Build\%sourcepath%_%archpath%\bin\release\*.dll" "%mainfolder
 copy "%mainfolder%\Build\%sourcepath%_%archpath%\bin\release\authserver.exe" "%mainfolder%\Repack" /Y
 copy "%mainfolder%\Build\%sourcepath%_%archpath%\bin\release\worldserver.exe" "%mainfolder%\Repack" /Y
 
-if exist "%mainfolder%\Repack\authserver.conf.dist" goto end_of_end
-copy "%mainfolder%\Build\%sourcepath%_%archpath%\bin\release\*.dist" "%mainfolder%\Repack" /Y
+echo n | copy /-y "%mainfolder%\Build\%sourcepath%_%archpath%\bin\release\*.dist" "%mainfolder%\Repack"
 
 :end_of_end
 explorer "%mainfolder%\Repack"
