@@ -159,6 +159,13 @@ goto menu
 :build
 echo.
 set /P cpu_cores=How many CPU core(s) you want to use for compile: 
+cls
+echo Prepare to build process...
+echo Servers shutting down...
+echo.
+taskkill /f /im authserver.exe
+taskkill /f /im worldserver.exe
+"%mainfolder%\Tools\database\%database%-%archpath%\bin\mysqladmin.exe" --defaults-extra-file="%mainfolder%\Tools\database\%database%-%archpath%\connection.cnf" shutdown
 rmdir /Q /S "%mainfolder%\Build"
 mkdir "%mainfolder%\Build\%sourcepath%_%archpath%"
 cd "%mainfolder%\Build\%sourcepath%_%archpath%"
