@@ -19,7 +19,6 @@ set archpath=Win32
 :beginning
 cd "%mainfolder%"
 mkdir"%mainfolder%\Tools\modules"
-rmdir /Q /S "%mainfolder%\Build"
 mkdir "%mainfolder%\Repack"
 mkdir "%mainfolder%\Repack\Database"
 mkdir "%mainfolder%\Repack\dbc"
@@ -160,6 +159,7 @@ goto menu
 :build
 echo.
 set /P cpu_cores=How many CPU core(s) you want to use for compile: 
+rmdir /Q /S "%mainfolder%\Build"
 mkdir "%mainfolder%\Build\%sourcepath%_%archpath%"
 cd "%mainfolder%\Build\%sourcepath%_%archpath%"
 echo.
