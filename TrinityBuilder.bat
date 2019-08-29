@@ -423,8 +423,8 @@ goto git_pull
 echo.
 echo Updating submodules if available...
 echo.
-REM %mainfolder%\Tools\Git\bin\git.exe submodule update --init --recursive
-REM %mainfolder%\Tools\Git\bin\git.exe submodule update --recursive --remote
+%mainfolder%\Tools\Git\bin\git.exe submodule update --init --recursive
+%mainfolder%\Tools\Git\bin\git.exe submodule update --recursive --remote
 if "%id%"=="6" (goto fix_modules_one)
 
 cd %mainfolder%
