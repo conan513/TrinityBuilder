@@ -25,6 +25,7 @@ mkdir "%mainfolder%\Repack\dbc"
 mkdir "%mainfolder%\Repack\maps"
 mkdir "%mainfolder%\Repack\vmaps"
 mkdir "%mainfolder%\Repack\mmaps"
+mkdir "%mainfolder%\Repack\lua_scripts"
 
 if not exist Build mkdir Build
 if not exist Source mkdir Source
@@ -90,8 +91,10 @@ goto menu
 
 :menu
 cd "%mainfolder%"
-if exist "%mainfolder%\Source\%sourcepath%\sololfg.txt" set sololfg_status=Installed
-if not exist "%mainfolder%\Source\%sourcepath%\sololfg.txt" set sololfg_status=Not installed
+if exist "%mainfolder%\Source\%sourcepath%\SoloLFG.txt" set sololfg_status=Installed
+if not exist "%mainfolder%\Source\%sourcepath%\SoloLFG.txt" set sololfg_status=Not installed
+if exist "%mainfolder%\Source\%sourcepath%\Robot_and_Marketer.txt" set robot_status=Installed
+if not exist "%mainfolder%\Source\%sourcepath%\Robot_and_Marketer.txt" set robot_status=Not installed
 cls
 echo #######################################################
 echo # Single Player Project - %sourcepath% repack builder
@@ -105,33 +108,53 @@ echo.
 echo ---[ CUSTOM STUFF ]---
 echo.
 echo 3 - SoloLFG (%sololfg_status%)
+echo 4 - Robot and Marketer by jokerlfm (%robot_status%)
 echo.
 set /P choose_menu=Choose a number: 
 if "%choose_menu%"=="1" (goto build)
 if "%choose_menu%"=="2" (goto open_modules)
 if "%choose_menu%"=="3" (goto install_sololfg)
+if "%choose_menu%"=="4" (goto install_robot)
 if "%choose_menu%"=="0" (goto reinstall_source)
+if "%choose_menu%"=="B" (goto build)
 if "%choose_menu%"=="" (goto menu)
 goto open_modules
 
 :install_sololfg
-if exist "%mainfolder%\Source\%sourcepath%\sololfg.txt" goto sololfg_installed
+set module_name=SoloLFG
+if exist "%mainfolder%\Source\%sourcepath%\%module_name%.txt" goto module_installed
 cd "%mainfolder%\Source\%sourcepath%"
 cls
-echo Downloading SoloLFG source into %sourcepath%...
+echo Downloading %module_name% source into %sourcepath%...
 echo.
 "%mainfolder%\Tools\Git\bin\git.exe" fetch https://github.com/SinglePlayerProject/azerothcore-wotlk.git lfg.solomode
 "%mainfolder%\Tools\Git\bin\git.exe" cherry-pick d89092f148c0623f665d8285334df33c492d593a
 echo.
-echo SoloLFG mode added into %sourcepath%.
-echo SoloLFG>"%mainfolder%\Source\%sourcepath%\sololfg.txt"
+echo %module_name% mode added into %sourcepath%.
+echo %module_name%>"%mainfolder%\Source\%sourcepath%\%module_name%.txt"
 echo.
 ping -n 5 127.0.0.1>nul
 goto menu
 
-:sololfg_installed
+:install_robot
+set module_name=Robot_and_Marketer
+if exist "%mainfolder%\Source\%sourcepath%\%module_name%.txt" goto module_installed
+cd "%mainfolder%\Source\%sourcepath%"
 cls
-echo SoloLFG code already included in the local %sourcepath% code.
+echo Downloading %module_name% source into %sourcepath%...
+echo.
+"%mainfolder%\Tools\Git\bin\git.exe" fetch https://github.com/SinglePlayerProject/azerothcore-wotlk.git robot
+"%mainfolder%\Tools\Git\bin\git.exe" cherry-pick 1cd4af0c9d9b42cbc330d71ead59c938e9e8e6d7
+echo.
+echo %module_name% mode added into %sourcepath%.
+echo %module_name%>"%mainfolder%\Source\%sourcepath%\%module_name%.txt"
+echo.
+ping -n 5 127.0.0.1>nul
+goto menu
+
+:module_installed
+cls
+echo %module_name% code already included in the local %sourcepath% code.
 echo.
 ping -n 5 127.0.0.1>nul
 goto menu
@@ -187,6 +210,7 @@ echo Copy required dll files into bin folder
 copy "%mainfolder%\Tools\database\%database%-%archpath%\lib\%database_lib%.dll" "%mainfolder%\Build\%sourcepath%_%archpath%\bin\release"
 copy "%mainfolder%\Tools\openssl\%openssl%-%archpath%\*.dll" "%mainfolder%\Build\%sourcepath%_%archpath%\bin\release"
 echo.
+pause
 cls
 REM if not exist "%mainfolder%\Build\%sourcepath%_%archpath%\bin\release\authserver.conf" goto copy_conf
 goto finalize
@@ -194,6 +218,8 @@ goto finalize
 :copy_conf
 copy "%mainfolder%\Build\%sourcepath%_%archpath%\bin\release\authserver.conf.dist" "%mainfolder%\Build\%sourcepath%_%archpath%\bin\release\authserver.conf"
 copy "%mainfolder%\Build\%sourcepath%_%archpath%\bin\release\worldserver.conf.dist" "%mainfolder%\Build\%sourcepath%_%archpath%\bin\release\worldserver.conf"
+copy "%mainfolder%\Source\%sourcepath%\src\server\game\Robot\robot.conf" "%mainfolder%\Build\%sourcepath%_%archpath%\bin\release\robot.conf"
+copy "%mainfolder%\Source\%sourcepath%\src\server\game\\Marketer\marketer.conf" "%mainfolder%\Build\%sourcepath%_%archpath%\bin\release\marketer.conf"
 goto finalize
 
 :finalize
@@ -266,6 +292,7 @@ echo.
 goto finish
 
 :finish
+"%mainfolder%\Tools\database\%database%-%archpath%\bin\mysql.exe" --defaults-extra-file="%mainfolder%\Tools\database\%database%-%archpath%\connection.cnf" --default-character-set=utf8 --database=acore_world < "%mainfolder%\Source\%sourcepath%\src\server\game\Robot\robot_names.sql"
 cd "%mainfolder%"
 cls
 echo Enter your World of Warcraft game folder path
@@ -322,8 +349,11 @@ echo.
 copy "%mainfolder%\Build\%sourcepath%_%archpath%\bin\release\*.dll" "%mainfolder%\Repack" /Y
 copy "%mainfolder%\Build\%sourcepath%_%archpath%\bin\release\authserver.exe" "%mainfolder%\Repack" /Y
 copy "%mainfolder%\Build\%sourcepath%_%archpath%\bin\release\worldserver.exe" "%mainfolder%\Repack" /Y
-
+xcopy /s "%mainfolder%\Build\%sourcepath%_%archpath%\bin\release\lua_scripts" "%mainfolder%\Repack\lua_scripts"
 echo n | copy /-y "%mainfolder%\Build\%sourcepath%_%archpath%\bin\release\*.dist" "%mainfolder%\Repack"
+echo n | copy /-y "%mainfolder%\Build\%sourcepath%_%archpath%\bin\release\*.conf" "%mainfolder%\Repack"
+echo n | copy /-y "%mainfolder%\Source\%sourcepath%\src\server\game\Robot\robot.conf" "%mainfolder%\Repack"
+echo n | copy /-y "%mainfolder%\Source\%sourcepath%\src\server\game\\Marketer\marketer.conf" "%mainfolder%\Repack"
 
 :end_of_end
 explorer "%mainfolder%\Repack"
