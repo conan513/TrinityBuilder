@@ -107,8 +107,8 @@ echo 0 - Delete local %sourcepath% source (reinstall)
 echo.
 echo ---[ CUSTOM STUFF ]---
 echo.
-echo 3 - SoloLFG (%sololfg_status%)
-echo 4 - Robot and Marketer by jokerlfm (%robot_status%)
+echo 3 - SoloLFG                                (%sololfg_status%)
+echo 4 - Robot and Marketer bots from jokerlfm  (%robot_status%)
 echo.
 set /P choose_menu=Choose a number: 
 if "%choose_menu%"=="1" (goto build)
