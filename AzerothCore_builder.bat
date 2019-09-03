@@ -26,6 +26,7 @@ mkdir "%mainfolder%\Repack\maps"
 mkdir "%mainfolder%\Repack\vmaps"
 mkdir "%mainfolder%\Repack\mmaps"
 mkdir "%mainfolder%\Repack\lua_scripts"
+mkdir "%mainfolder%\Repack\modules_sql"
 
 if not exist Build mkdir Build
 if not exist Source mkdir Source
@@ -292,6 +293,15 @@ echo.
 goto finish
 
 :finish
+cd "%mainfolder%\Source\%sourcepath%\modules"
+echo Collecting modules SQL files...
+for /r %%d in (*.sql) do copy "%%d" "%mainfolder%\Repack\modules_sql" /Y
+echo.
+echo Installing modules SQL files into the database....
+echo
+for %%i in ("%mainfolder%\Repack\modules_sql\*sql") do if %%i neq "%mainfolder%\Repack\modules_sql\*sql" if %%i neq "%mainfolder%\Repack\modules_sql\*sql" if %%i neq "%mainfolder%\Repack\modules_sql\*sql" echo %%i & "%mainfolder%\Tools\database\%database%-%archpath%\bin\mysql.exe" --defaults-extra-file="%mainfolder%\Tools\database\%database%-%archpath%\connection.cnf" --default-character-set=utf8 --database=acore_auth < %%i
+for %%i in ("%mainfolder%\Repack\modules_sql\*sql") do if %%i neq "%mainfolder%\Repack\modules_sql\*sql" if %%i neq "%mainfolder%\Repack\modules_sql\*sql" if %%i neq "%mainfolder%\Repack\modules_sql\*sql" echo %%i & "%mainfolder%\Tools\database\%database%-%archpath%\bin\mysql.exe" --defaults-extra-file="%mainfolder%\Tools\database\%database%-%archpath%\connection.cnf" --default-character-set=utf8 --database=acore_characters < %%i
+for %%i in ("%mainfolder%\Repack\modules_sql\*sql") do if %%i neq "%mainfolder%\Repack\modules_sql\*sql" if %%i neq "%mainfolder%\Repack\modules_sql\*sql" if %%i neq "%mainfolder%\Repack\modules_sql\*sql" echo %%i & "%mainfolder%\Tools\database\%database%-%archpath%\bin\mysql.exe" --defaults-extra-file="%mainfolder%\Tools\database\%database%-%archpath%\connection.cnf" --default-character-set=utf8 --database=acore_world < %%i
 "%mainfolder%\Tools\database\%database%-%archpath%\bin\mysql.exe" --defaults-extra-file="%mainfolder%\Tools\database\%database%-%archpath%\connection.cnf" --default-character-set=utf8 --database=acore_world < "%mainfolder%\Source\%sourcepath%\src\server\game\Robot\robot_names.sql"
 cd "%mainfolder%"
 cls
@@ -345,15 +355,28 @@ goto end
 "%mainfolder%\Tools\database\%database%-%archpath%\bin\mysqladmin.exe" --defaults-extra-file="%mainfolder%\Tools\database\%database%-%archpath%\connection.cnf" shutdown
 echo Closing database server...
 echo.
-
+echo Copy config files into the repack...
+echo
 copy "%mainfolder%\Build\%sourcepath%_%archpath%\bin\release\*.dll" "%mainfolder%\Repack" /Y
 copy "%mainfolder%\Build\%sourcepath%_%archpath%\bin\release\authserver.exe" "%mainfolder%\Repack" /Y
 copy "%mainfolder%\Build\%sourcepath%_%archpath%\bin\release\worldserver.exe" "%mainfolder%\Repack" /Y
-xcopy /s "%mainfolder%\Build\%sourcepath%_%archpath%\bin\release\lua_scripts" "%mainfolder%\Repack\lua_scripts"
-echo n | copy /-y "%mainfolder%\Build\%sourcepath%_%archpath%\bin\release\*.dist" "%mainfolder%\Repack"
-echo n | copy /-y "%mainfolder%\Build\%sourcepath%_%archpath%\bin\release\*.conf" "%mainfolder%\Repack"
+xcopy /s "%mainfolder%\Build\%sourcepath%_%archpath%\bin\release\lua_scripts" "%mainfolder%\Repack\lua_scripts" /K /D /H /Y
+copy "%mainfolder%\Build\%sourcepath%_%archpath%\bin\release\authserver.conf.dist" "%mainfolder%\Repack" /Y
+copy "%mainfolder%\Build\%sourcepath%_%archpath%\bin\release\worldserver.conf.dist" "%mainfolder%\Repack" /Y
+echo n | copy /-y "%mainfolder%\Build\%sourcepath%_%archpath%\bin\release\authserver.conf.dist" "%mainfolder%\Repack\authserver.conf"
+echo n | copy /-y "%mainfolder%\Build\%sourcepath%_%archpath%\bin\release\worldserver.conf.dist" "%mainfolder%\Repack\worldserver.conf"
 echo n | copy /-y "%mainfolder%\Source\%sourcepath%\src\server\game\Robot\robot.conf" "%mainfolder%\Repack"
 echo n | copy /-y "%mainfolder%\Source\%sourcepath%\src\server\game\\Marketer\marketer.conf" "%mainfolder%\Repack"
+
+cd "%mainfolder%\Source\%sourcepath%\modules"
+for /r %%d in (*.conf.dist) do copy  "%%d" "%mainfolder%\Repack" /Y
+for /r %%d in (*.conf.dist) do copy  "%%d" "%mainfolder%\Repack\modules_sql" /Y
+cd "%mainfolder%\Repack\modules_sql"
+ren *.dist *.
+cd "%mainfolder%"
+echo n | copy /-y "%mainfolder%\Repack\modules_sql\*.conf" "%mainfolder%\Repack"
+ping -n 2 127.0.0.1>nul
+rmdir /Q /S "%mainfolder%\Repack\modules_sql"
 
 :end_of_end
 explorer "%mainfolder%\Repack"
