@@ -91,6 +91,8 @@ echo.
 goto menu
 
 :menu
+"%mainfolder%\Tools\Git\bin\git.exe" config --global user.name "SPP User"
+"%mainfolder%\Tools\Git\bin\git.exe" config --global user.email spp-user@spp-forum.de
 cd "%mainfolder%"
 if exist "%mainfolder%\Source\%sourcepath%\SoloLFG.txt" set sololfg_status=Installed
 if not exist "%mainfolder%\Source\%sourcepath%\SoloLFG.txt" set sololfg_status=Not installed
@@ -144,8 +146,7 @@ cd "%mainfolder%\Source\%sourcepath%"
 cls
 echo Downloading %module_name% source into %sourcepath%...
 echo.
-"%mainfolder%\Tools\Git\bin\git.exe" fetch https://github.com/SinglePlayerProject/azerothcore-wotlk.git robot
-"%mainfolder%\Tools\Git\bin\git.exe" cherry-pick 1cd4af0c9d9b42cbc330d71ead59c938e9e8e6d7
+"%mainfolder%\Tools\Git\bin\git.exe" pull https://github.com/jokerlfm/azerothcore-wotlk.git
 echo.
 echo %module_name% mode added into %sourcepath%.
 echo %module_name%>"%mainfolder%\Source\%sourcepath%\%module_name%.txt"
@@ -293,6 +294,7 @@ echo.
 goto finish
 
 :finish
+set /p wow_path=<"%mainfolder%\wow_path.txt"
 cd "%mainfolder%\Source\%sourcepath%\modules"
 echo Collecting modules SQL files...
 for /r %%d in (*.sql) do copy "%%d" "%mainfolder%\Repack\modules_sql" /Y
@@ -305,19 +307,40 @@ for %%i in ("%mainfolder%\Repack\modules_sql\*sql") do if %%i neq "%mainfolder%\
 "%mainfolder%\Tools\database\%database%-%archpath%\bin\mysql.exe" --defaults-extra-file="%mainfolder%\Tools\database\%database%-%archpath%\connection.cnf" --default-character-set=utf8 --database=acore_world < "%mainfolder%\Source\%sourcepath%\src\server\game\Robot\robot_names.sql"
 cd "%mainfolder%"
 cls
+if exist "%mainfolder%\wow_path.txt" goto extract_data
 echo Enter your World of Warcraft game folder path
 echo to extract dbc, maps, vmaps and mmaps.
 echo.
 echo Example: C:\Games\World of Warcraft
-echo.
-echo Enter 0 to skip this process.
+echo Current WoW path: %wow_path%
 echo.
 set /P wow_path=Path: 
-if "%wow_path%"=="0" (goto end)
 if "%wow_path%"=="" (goto finish)
 goto extract_data
 
+:wow_path_empty
+cls
+echo Enter your World of Warcraft game folder path
+echo to extract dbc, maps, vmaps and mmaps.
+echo.
+echo Example: C:\Games\World of Warcraft
+echo Current WoW path: %wow_path%
+echo
+set /P wow_path=Path: 
+goto extract_data
+
+:wow_path_wrong
+cls
+echo Wow.exe not found in the specified WoW path.
+echo Please try to set the game path again.
+echo
+set /P wow_path=Path: 
+goto extract_data
+
 :extract_data
+if "%wow_path%"=="" (goto wow_path_empty)
+if not exist "%wow_path%\wow.exe" goto wow_path_wrong
+echo %wow_path%>"%mainfolder%\wow_path.txt"
 cls
 echo Extracting data files from World of Warcraft...
 echo.
@@ -335,11 +358,21 @@ mkdir maps
 mkdir vmaps
 mkdir mmaps
 cls
+
+:dbc_maps
+if exist "%wow_path%\maps\7242732.map" goto vmaps
 start /b /w mapextractor.exe
+
+:vmaps
+if exist "%wow_path%\vmaps\Zulgurubtree05.m2.vmo" goto mmaps
 start /b /w vmap4extractor.exe
 start /b /w vmap4assembler.exe Buildings vmaps
+
+:mmaps
+if exist "%wow_path%\mmaps\598.mmap" goto extract_finish
 start /b /w mmaps_generator.exe
 
+:extract_finish
 %mainfolder:~0,1%:
 cd "%mainfolder%"
 
