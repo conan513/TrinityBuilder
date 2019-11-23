@@ -7,7 +7,6 @@ SET mainfolder=%CD%
 SET cmake=3.7.2
 SET cmake_latest=3.12.2
 SET mariadb_version=10.1.36
-SET mysqldb_version=5.7.26
 SET arch=Win32
 SET BOOST_ROOT=%mainfolder%\Tools\boost
 SET BOOST_LIBRARYDIR=%mainfolder%\Tools\boost\lib32-msvc-14.1
@@ -25,7 +24,6 @@ goto menu
 
 :msbuild_not_found
 cls
-set vs_version=2017
 echo MSBuild.exe not found here: 
 echo %msbuildpath%
 echo.
@@ -34,38 +32,12 @@ echo.
 echo 1 - Install Visual Studio 2017 Community Edition (recommend)
 echo 2 - Use my pre-installed Visual Studio 2017
 echo.
-echo 0 - Skip VS2017, move to VS2019 installer
-echo.
-set /P vs_menu=Enter a number: 
-if "%vs_menu%"=="1" (goto install_vs_community)
-if "%vs_menu%"=="2" (goto vs_use_own)
-if "%vs_menu%"=="0" (goto msbuild_not_found_2019)
-if "%vs_menu%"=="" (goto msbuild_not_found)
-goto msbuild_not_found_2019
-
-:msbuild_not_found_2019
-cls
-set vs_version=2019
-echo MSBuild.exe not found here: 
-echo %msbuildpath%
-echo.
-echo Do you want to install Visual Studio 2019 Community Edition or want to use your own Visual Studio?
-echo.
-echo 1 - Install Visual Studio 2019 Community Edition (recommend)
-echo 2 - Use my pre-installed Visual Studio 2019
-echo.
-echo 0 - Skip VS2019, move to VS2017 installer
-echo.
-set /P vs_menu=Enter a number: 
-if "%vs_menu%"=="1" (goto install_vs_community)
-if "%vs_menu%"=="2" (goto vs_use_own)
-if "%vs_menu%"=="0" (goto msbuild_not_found)
-if "%vs_menu%"=="" (goto msbuild_not_found_2019)
-goto msbuild_not_found
+set /P menu=Enter a number: 
+if "%menu%"=="1" (goto install_vs_community)
+if "%menu%"=="2" (goto vs_use_own)
 
 :vs_use_own
-if "%vs_version%"=="2017" (echo using own vs2017>Tools\vs_ok.txt
-if "%vs_version%"=="2019" (echo using own vs2019>Tools\vs_ok_2019.txt
+echo using own vs2017>Tools\vs_ok.txt
 goto menu
 
 :install_vs_community
@@ -313,16 +285,14 @@ if "%openssl_select%"=="" (goto wrong_option)
 :mysql_choose
 echo.
 echo 1 - MariaDB %mariadb_version%
-echo 2 - MySQL %mysqldb_version%
-echo 3 - MySQL 8.0.12 (x64 only)
+echo 2 - MySQL 8.0.12 (x64 only)
 echo.
 set /P mariadb_select=Select cmake version: 
 if "%mariadb_select%"=="1" (set mariadb=MariaDB-%mariadb_version%)
-if "%mariadb_select%"=="2" (set mariadb=MySQL-%mysqldb_version%)
-if "%mariadb_select%"=="3" (set mariadb=MySQL-8.0.12)
+if "%mariadb_select%"=="2" (set mariadb=MySQL-8.0.12)
 if "%mariadb_select%"=="" (goto wrong_option)
 
-if "%mariadb_select%"=="3" (goto arch_choose_x64_only)
+if "%mariadb_select%"=="2" (goto arch_choose_x64_only)
 
 :arch_choose
 echo.
@@ -423,8 +393,8 @@ goto git_pull
 echo.
 echo Updating submodules if available...
 echo.
-REM %mainfolder%\Tools\Git\bin\git.exe submodule update --init --recursive
-REM %mainfolder%\Tools\Git\bin\git.exe submodule update --recursive --remote
+%mainfolder%\Tools\Git\bin\git.exe submodule update --init --recursive
+%mainfolder%\Tools\Git\bin\git.exe submodule update --recursive --remote
 if "%id%"=="6" (goto fix_modules_one)
 
 cd %mainfolder%
