@@ -2,7 +2,7 @@
 :start
 SET mainfolder=%CD%
 SET msbuildpath="%mainfolder%\Tools\VisualStudio\MSBuild\15.0\Bin\msbuild.exe"
-SET cmake=3.12.2
+SET cmake=3.21.1
 set database=MySQL-5.7.26
 set database_lib=libmysql
 set openssl=1.1.0
