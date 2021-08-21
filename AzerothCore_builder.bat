@@ -8,6 +8,7 @@ set database_lib=libmysql
 set openssl=1.1.0
 SET BOOST_ROOT="%mainfolder%\Tools\boost"
 SET BOOST_LIBRARYDIR="%mainfolder%\Tools\boost\lib64-msvc-14.2"
+SET BOOST_INCLUDE_DIR="%mainfolder%\Tools\boost"
 set "GIT_EXEC_PATH=%mainfolder%\tools\Git\bin"
 SET dynamic_linking=0
 set sourcepath=AzerothCore
