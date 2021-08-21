@@ -3,18 +3,18 @@
 SET mainfolder=%CD%
 SET msbuildpath="%mainfolder%\Tools\VisualStudio\MSBuild\15.0\Bin\msbuild.exe"
 SET cmake=3.21.1
-set database=MySQL-5.7.26
+set database=MySQL-5.7.35
 set database_lib=libmysql
 set openssl=1.1.0
 SET BOOST_ROOT="%mainfolder%\Tools\boost"
-SET BOOST_LIBRARYDIR="%mainfolder%\Tools\boost\lib32-msvc-14.1"
+SET BOOST_LIBRARYDIR="%mainfolder%\Tools\boost\lib64-msvc-14.2"
 set "GIT_EXEC_PATH=%mainfolder%\tools\Git\bin"
 SET dynamic_linking=0
 set sourcepath=AzerothCore
 set repo=https://github.com/azerothcore/azerothcore-wotlk.git
 set branch=master
 set arch=
-set archpath=Win32
+set archpath=Win64
 
 :beginning
 cd "%mainfolder%"
@@ -201,7 +201,6 @@ echo.
 echo.
 echo Start building...
 echo.
-if exist "%mainfolder%\Tools\vs_ok.txt" goto manual_vs_build
 %msbuildpath% /p:CL_MPCount=%cpu_cores% ALL_BUILD.vcxproj /p:Configuration=Release
 echo.
 echo Copy required dll files into bin folder
