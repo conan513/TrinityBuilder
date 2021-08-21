@@ -8,7 +8,7 @@ set database_lib=libmysql
 set openssl=1.1.0
 SET BOOST_ROOT="%mainfolder%\Tools\boost"
 SET BOOST_LIBRARYDIR="%mainfolder%\Tools\boost\lib32-msvc-14.1"
-SET GIT_EXECUTABLE="%mainfolder%\Tools\Git\bin"
+set "GIT_EXEC_PATH=%mainfolder%\tools\Git\bin"
 SET dynamic_linking=0
 set sourcepath=AzerothCore
 set repo=https://github.com/azerothcore/azerothcore-wotlk.git
@@ -35,10 +35,6 @@ if exist "%mainfolder%\Tools\VisualStudio\MSBuild\Current\Bin\MSBuild.exe" goto 
 if not exist %msbuildpath% goto install_vs_community
 goto git_clone
 
-:vs_use_own
-echo using own vs2017>Tools\vs_ok.txt
-goto git_clone
-
 :install_vs_community
 cls
 "%CD%\Tools\vs_community.exe" -p --installPath "%CD%\Tools\VisualStudio" --add Microsoft.VisualStudio.Component.VC.Tools.x86.x64 --add Microsoft.VisualStudio.Workload.NativeDesktop;includeRecommended
@@ -54,11 +50,11 @@ cls
 if exist "%mainfolder%\Source\%sourcepath%\README.md" goto git_pull
 echo Get the source from %repo% %branch%
 echo.
-"%mainfolder%\Tools\Git\bin\git.exe" clone %repo% "%mainfolder%/Source/%sourcepath%"
+"%GIT_EXEC_PATH%\git.exe" clone %repo% "%mainfolder%/Source/%sourcepath%"
 goto git_clone_finish
 
 :git_clone_branch
-"%mainfolder%\Tools\Git\bin\git.exe" clone %repo% --single-branch -b %branch% "%mainfolder%/Source/%sourcepath%"
+"%GIT_EXEC_PATH%\git.exe" clone %repo% --single-branch -b %branch% "%mainfolder%/Source/%sourcepath%"
 goto git_clone_finish
 
 :git_clone_finish
@@ -66,7 +62,7 @@ echo.
 echo Downloading submodules if available...
 echo.
 cd "%mainfolder%\Source\%sourcepath%"
-"%mainfolder%\Tools\Git\bin\git.exe" submodule update --init --recursive
+"%GIT_EXEC_PATH%\git.exe" submodule update --init --recursive
 cd "%mainfolder%"
 goto git_pull
 
@@ -75,24 +71,24 @@ echo.
 echo Pull the commits from %repo% %branch%
 echo.
 cd "%mainfolder%\Source\%sourcepath%"
-"%mainfolder%\Tools\Git\bin\git.exe" pull %repo%
+"%GIT_EXEC_PATH%\git.exe" pull %repo%
 goto git_pull_finish
 
 :git_pull_branch
-"%mainfolder%\Tools\Git\bin\git.exe" pull %repo% %branch%
+"%GIT_EXEC_PATH%\git.exe" pull %repo% %branch%
 goto git_pull_finish
 
 :git_pull_finish
 echo.
 echo Updating submodules if available...
 echo.
-"%mainfolder%\Tools\Git\bin\git.exe" submodule update --init --recursive
-"%mainfolder%\Tools\Git\bin\git.exe" submodule update --recursive --remote
+"%GIT_EXEC_PATH%\git.exe" submodule update --init --recursive
+"%GIT_EXEC_PATH%\git.exe" submodule update --recursive --remote
 goto menu
 
 :menu
-"%mainfolder%\Tools\Git\bin\git.exe" config --global user.name "SPP User"
-"%mainfolder%\Tools\Git\bin\git.exe" config --global user.email spp-user@spp-forum.de
+"%GIT_EXEC_PATH%\git.exe" config --global user.name "SPP User"
+"%GIT_EXEC_PATH%\git.exe" config --global user.email spp-user@spp-forum.de
 cd "%mainfolder%"
 if exist "%mainfolder%\Source\%sourcepath%\SoloLFG.txt" set sololfg_status=Installed
 if not exist "%mainfolder%\Source\%sourcepath%\SoloLFG.txt" set sololfg_status=Not installed
@@ -130,8 +126,8 @@ cd "%mainfolder%\Source\%sourcepath%"
 cls
 echo Downloading %module_name% source into %sourcepath%...
 echo.
-"%mainfolder%\Tools\Git\bin\git.exe" fetch https://github.com/SinglePlayerProject/azerothcore-wotlk.git lfg.solomode
-"%mainfolder%\Tools\Git\bin\git.exe" cherry-pick d89092f148c0623f665d8285334df33c492d593a
+"%GIT_EXEC_PATH%\git.exe" fetch https://github.com/SinglePlayerProject/azerothcore-wotlk.git lfg.solomode
+"%GIT_EXEC_PATH%\git.exe" cherry-pick d89092f148c0623f665d8285334df33c492d593a
 echo.
 echo %module_name% mode added into %sourcepath%.
 echo %module_name%>"%mainfolder%\Source\%sourcepath%\%module_name%.txt"
@@ -146,7 +142,7 @@ cd "%mainfolder%\Source\%sourcepath%"
 cls
 echo Downloading %module_name% source into %sourcepath%...
 echo.
-"%mainfolder%\Tools\Git\bin\git.exe" pull https://github.com/jokerlfm/azerothcore-wotlk.git
+"%GIT_EXEC_PATH%\git.exe" pull https://github.com/jokerlfm/azerothcore-wotlk.git
 echo.
 echo %module_name% mode added into %sourcepath%.
 echo %module_name%>"%mainfolder%\Source\%sourcepath%\%module_name%.txt"
