@@ -266,13 +266,6 @@ cls
 echo Starting and setup the database...
 echo.
 
-echo DROP DATABASE IF EXISTS `acore_auth`;>"%mainfolder%\Repack\Database\create_database.sql"
-echo DROP DATABASE IF EXISTS `acore_characters`;>>"%mainfolder%\Repack\Database\create_database.sql"
-echo DROP DATABASE IF EXISTS `acore_world`;>>"%mainfolder%\Repack\Database\create_database.sql"
-echo CREATE DATABASE IF NOT EXISTS `acore_auth` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;>>"%mainfolder%\Repack\Database\create_database.sql"
-echo CREATE DATABASE IF NOT EXISTS `acore_characters` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;>>"%mainfolder%\Repack\Database\create_database.sql"
-echo CREATE DATABASE IF NOT EXISTS `acore_world` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;>>"%mainfolder%\Repack\Database\create_database.sql"
-
 "%mainfolder%\Tools\database\%database%-%archpath%\bin\mysql.exe" --defaults-extra-file="%mainfolder%\Tools\database\%database%-%archpath%\connection.cnf" --default-character-set=utf8 < "%mainfolder%\Repack\Database\create_database.sql"
 for %%i in ("%mainfolder%\Source\%sourcepath%\data\sql\base\db_auth\*sql") do if %%i neq "%mainfolder%\Source\%sourcepath%\data\sql\base\db_auth\*sql" if %%i neq "%mainfolder%\Source\%sourcepath%\data\sql\base\db_auth\*sql" if %%i neq "%mainfolder%\Source\%sourcepath%\data\sql\base\db_auth\*sql" echo %%i & "%mainfolder%\Tools\database\%database%-%archpath%\bin\mysql.exe" --defaults-extra-file="%mainfolder%\Tools\database\%database%-%archpath%\connection.cnf" --default-character-set=utf8 --database=acore_auth < %%i
 for %%i in ("%mainfolder%\Source\%sourcepath%\data\sql\base\db_characters\*sql") do if %%i neq "%mainfolder%\Source\%sourcepath%\data\sql\base\db_characters\*sql" if %%i neq "%mainfolder%\Source\%sourcepath%\data\sql\base\db_characters\*sql" if %%i neq "%mainfolder%\Source\%sourcepath%\data\sql\base\db_characters\*sql" echo %%i & "%mainfolder%\Tools\database\%database%-%archpath%\bin\mysql.exe" --defaults-extra-file="%mainfolder%\Tools\database\%database%-%archpath%\connection.cnf" --default-character-set=utf8 --database=acore_characters < %%i
@@ -410,4 +403,4 @@ rmdir /Q /S "%mainfolder%\Repack\modules_sql"
 :end_of_end
 explorer "%mainfolder%\Repack"
 exit
-
+ 
