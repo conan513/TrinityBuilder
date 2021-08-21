@@ -31,7 +31,7 @@ mkdir "%mainfolder%\Repack\modules_sql"
 if not exist Build mkdir Build
 if not exist Source mkdir Source
 
-if exist "%mainfolder%\Tools\vs_ok.txt" goto git_clone
+if exist "%mainfolder%\Tools\VisualStudio\MSBuild\Current\Bin\MSBuild.exe" goto git_clone
 if not exist %msbuildpath% goto install_vs_community
 goto git_clone
 
