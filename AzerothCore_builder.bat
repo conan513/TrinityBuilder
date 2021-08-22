@@ -28,6 +28,8 @@ mkdir "%mainfolder%\Repack\vmaps"
 mkdir "%mainfolder%\Repack\mmaps"
 mkdir "%mainfolder%\Repack\lua_scripts"
 mkdir "%mainfolder%\Repack\modules_sql"
+mkdir "%mainfolder%\Repack\configs"
+mkdir "%mainfolder%\Repack\configs\modules"
 
 if not exist Build mkdir Build
 if not exist Source mkdir Source
@@ -170,7 +172,7 @@ ping -n 5 127.0.0.1>nul
 goto beginning
 
 :open_modules
-start "" http://www.azerothcore.org/modules-catalogue/
+start "" https://www.azerothcore.org/catalogue.html
 cls
 echo Copy %sourcepath% module folders here.
 echo.
@@ -179,6 +181,18 @@ ping -n 10 127.0.0.1>nul
 goto menu
 
 :build
+cls
+echo Do you want to build the core?
+echo.
+echo 1 - Build
+echo 2 - Skip
+echo.
+set /P choose_menu=Choose a number: 
+if "%choose_menu%"=="1" (goto build_yes)
+if "%choose_menu%"=="2" (goto copy_conf)
+if "%choose_menu%"=="" (goto build)
+
+:build_yes
 echo.
 set /P cpu_cores=How many CPU core(s) you want to use for compile: 
 cls
@@ -214,19 +228,23 @@ REM if not exist "%mainfolder%\Build\%sourcepath%_%archpath%\bin\release\authser
 goto finalize
 
 :copy_conf
-copy "%mainfolder%\Build\%sourcepath%_%archpath%\bin\release\authserver.conf.dist" "%mainfolder%\Build\%sourcepath%_%archpath%\bin\release\authserver.conf"
-copy "%mainfolder%\Build\%sourcepath%_%archpath%\bin\release\worldserver.conf.dist" "%mainfolder%\Build\%sourcepath%_%archpath%\bin\release\worldserver.conf"
-copy "%mainfolder%\Source\%sourcepath%\src\server\game\Robot\robot.conf" "%mainfolder%\Build\%sourcepath%_%archpath%\bin\release\robot.conf"
-copy "%mainfolder%\Source\%sourcepath%\src\server\game\\Marketer\marketer.conf" "%mainfolder%\Build\%sourcepath%_%archpath%\bin\release\marketer.conf"
+REM copy "%mainfolder%\Build\%sourcepath%_%archpath%\bin\release\configs\authserver.conf.dist" "%mainfolder%\Build\%sourcepath%_%archpath%\bin\release\configs\authserver.conf"
+REM copy "%mainfolder%\Build\%sourcepath%_%archpath%\bin\release\configs\worldserver.conf.dist" "%mainfolder%\Build\%sourcepath%_%archpath%\bin\release\configs\worldserver.conf"
+REM copy "%mainfolder%\Source\%sourcepath%\src\server\game\Robot\robot.conf" "%mainfolder%\Build\%sourcepath%_%archpath%\bin\release\robot.conf"
+REM copy "%mainfolder%\Source\%sourcepath%\src\server\game\\Marketer\marketer.conf" "%mainfolder%\Build\%sourcepath%_%archpath%\bin\release\marketer.conf"
 goto finalize
 
 :finalize
 echo Setup databse and modifying config files...
 echo
-"%mainfolder%\Tools\fart.exe" "%mainfolder%\Build\%sourcepath%_%archpath%\bin\release\authserver.conf.dist" 127.0.0.1;3306;acore;acore;acore_auth 127.0.0.1;3310;root;123456;acore_auth
-"%mainfolder%\Tools\fart.exe" "%mainfolder%\Build\%sourcepath%_%archpath%\bin\release\worldserver.conf.dist" 127.0.0.1;3306;acore;acore;acore_auth 127.0.0.1;3310;root;123456;acore_auth
-"%mainfolder%\Tools\fart.exe" "%mainfolder%\Build\%sourcepath%_%archpath%\bin\release\worldserver.conf.dist" 127.0.0.1;3306;acore;acore;acore_world 127.0.0.1;3310;root;123456;acore_world
-"%mainfolder%\Tools\fart.exe" "%mainfolder%\Build\%sourcepath%_%archpath%\bin\release\worldserver.conf.dist" 127.0.0.1;3306;acore;acore;acore_characters 127.0.0.1;3310;root;123456;acore_characters
+type "%mainfolder%\Build\%sourcepath%_%archpath%\bin\release\configs\authserver.conf.dist" | "%mainfolder%\Tools\repl.bat" "127.0.0.1;3306;acore;acore;acore_auth" "127.0.0.1;3310;root;123456;acore_auth" > "%mainfolder%\Build\%sourcepath%_%archpath%\bin\release\configs\authserver.conf.dist1"
+type "%mainfolder%\Build\%sourcepath%_%archpath%\bin\release\configs\authserver.conf.dist1" | "%mainfolder%\Tools\repl.bat" "Updates.EnableDatabases = 1" "Updates.EnableDatabases = 0" > "%mainfolder%\Build\%sourcepath%_%archpath%\bin\release\configs\authserver.conf"
+
+type "%mainfolder%\Build\%sourcepath%_%archpath%\bin\release\configs\worldserver.conf.dist" | "%mainfolder%\Tools\repl.bat" "127.0.0.1;3306;acore;acore;acore_auth" "127.0.0.1;3310;root;123456;acore_auth" > "%mainfolder%\Build\%sourcepath%_%archpath%\bin\release\configs\worldserver.conf.dist1"
+type "%mainfolder%\Build\%sourcepath%_%archpath%\bin\release\configs\worldserver.conf.dist1" | "%mainfolder%\Tools\repl.bat" "127.0.0.1;3306;acore;acore;acore_world" "127.0.0.1;3310;root;123456;acore_world" > "%mainfolder%\Build\%sourcepath%_%archpath%\bin\release\configs\worldserver.conf.dist2"
+type "%mainfolder%\Build\%sourcepath%_%archpath%\bin\release\configs\worldserver.conf.dist2" | "%mainfolder%\Tools\repl.bat" "127.0.0.1;3306;acore;acore;acore_characters" "127.0.0.1;3310;root;123456;acore_characters" > "%mainfolder%\Build\%sourcepath%_%archpath%\bin\release\configs\worldserver.conf.dist3"
+type "%mainfolder%\Build\%sourcepath%_%archpath%\bin\release\configs\worldserver.conf.dist3" | "%mainfolder%\Tools\repl.bat" "Updates.EnableDatabases = 7" "Updates.EnableDatabases = 0" > "%mainfolder%\Build\%sourcepath%_%archpath%\bin\release\configs\worldserver.conf"
+
 
 echo @echo off>"%mainfolder%\Repack\Database.bat"
 REM echo set mainfolder=%CD%>>"%mainfolder%\Repack\Database.bat"
@@ -329,7 +347,23 @@ goto extract_data
 :extract_data
 if "%wow_path%"=="" (goto wow_path_empty)
 if not exist "%wow_path%\wow.exe" goto wow_path_wrong
+cls
 echo %wow_path%>"%mainfolder%\wow_path.txt"
+echo.
+echo Do you want to extract the data files from the game?
+echo.
+echo 1 - Extract
+echo 2 - Skip
+echo.
+echo 0 - Change WoW path
+echo.
+set /P choose_menu=Choose a number: 
+if "%choose_menu%"=="1" (goto extract_data_yes)
+if "%choose_menu%"=="2" (goto end)
+if "%choose_menu%"=="0" (goto wow_path_empty)
+if "%choose_menu%"=="" (goto extract_data)
+
+:extract_data_yes
 cls
 echo Extracting data files from World of Warcraft...
 echo.
@@ -383,24 +417,24 @@ copy "%mainfolder%\Build\%sourcepath%_%archpath%\bin\release\*.dll" "%mainfolder
 copy "%mainfolder%\Build\%sourcepath%_%archpath%\bin\release\authserver.exe" "%mainfolder%\Repack" /Y
 copy "%mainfolder%\Build\%sourcepath%_%archpath%\bin\release\worldserver.exe" "%mainfolder%\Repack" /Y
 xcopy /s "%mainfolder%\Build\%sourcepath%_%archpath%\bin\release\lua_scripts" "%mainfolder%\Repack\lua_scripts" /K /D /H /Y
-copy "%mainfolder%\Build\%sourcepath%_%archpath%\bin\release\authserver.conf.dist" "%mainfolder%\Repack" /Y
-copy "%mainfolder%\Build\%sourcepath%_%archpath%\bin\release\worldserver.conf.dist" "%mainfolder%\Repack" /Y
-echo n | copy /-y "%mainfolder%\Build\%sourcepath%_%archpath%\bin\release\authserver.conf.dist" "%mainfolder%\Repack\authserver.conf"
-echo n | copy /-y "%mainfolder%\Build\%sourcepath%_%archpath%\bin\release\worldserver.conf.dist" "%mainfolder%\Repack\worldserver.conf"
+copy "%mainfolder%\Build\%sourcepath%_%archpath%\bin\release\configs\authserver.conf.dist" "%mainfolder%\Repack\configs" /Y
+copy "%mainfolder%\Build\%sourcepath%_%archpath%\bin\release\configs\worldserver.conf.dist" "%mainfolder%\Repack\configs" /Y
+echo n | copy /-y "%mainfolder%\Build\%sourcepath%_%archpath%\bin\release\configs\authserver.conf" "%mainfolder%\Repack\configs" /Y
+echo n | copy /-y "%mainfolder%\Build\%sourcepath%_%archpath%\bin\release\configs\worldserver.conf" "%mainfolder%\Repack\configs" /Y
 echo n | copy /-y "%mainfolder%\Source\%sourcepath%\src\server\game\Robot\robot.conf" "%mainfolder%\Repack"
 echo n | copy /-y "%mainfolder%\Source\%sourcepath%\src\server\game\\Marketer\marketer.conf" "%mainfolder%\Repack"
 
 cd "%mainfolder%\Source\%sourcepath%\modules"
-for /r %%d in (*.conf.dist) do copy  "%%d" "%mainfolder%\Repack" /Y
+for /r %%d in (*.conf.dist) do copy  "%%d" "%mainfolder%\Repack\configs\modules" /Y
 for /r %%d in (*.conf.dist) do copy  "%%d" "%mainfolder%\Repack\modules_sql" /Y
 cd "%mainfolder%\Repack\modules_sql"
 ren *.dist *.
 cd "%mainfolder%"
-echo n | copy /-y "%mainfolder%\Repack\modules_sql\*.conf" "%mainfolder%\Repack"
+echo n | copy /-y "%mainfolder%\Repack\modules_sql\*.conf" "%mainfolder%\Repack\configs\modules"
 ping -n 2 127.0.0.1>nul
 rmdir /Q /S "%mainfolder%\Repack\modules_sql"
 
 :end_of_end
 explorer "%mainfolder%\Repack"
 exit
- 
+
