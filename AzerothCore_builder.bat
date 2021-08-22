@@ -100,7 +100,7 @@ if not exist "%mainfolder%\Source\%sourcepath%\Robot_and_Marketer.txt" set robot
 cls
 echo #######################################################
 echo # Single Player Project - %sourcepath% repack builder
-echo # https://spp-forum.de
+echo # https://singleplayerproject.com
 echo #######################################################
 echo.
 echo 1 - Start the build process
