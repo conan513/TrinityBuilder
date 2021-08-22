@@ -107,16 +107,16 @@ echo 1 - Start the build process
 echo 2 - Open the modules folder
 echo 0 - Delete local %sourcepath% source (reinstall)
 echo.
-echo ---[ CUSTOM STUFF ]---
-echo.
-echo 3 - SoloLFG                                (%sololfg_status%)
-echo 4 - Robot and Marketer bots from jokerlfm  (%robot_status%)
-echo.
+REM echo ---[ CUSTOM STUFF ]---
+REM echo.
+REM echo 3 - SoloLFG                                (%sololfg_status%)
+REM echo 4 - Robot and Marketer bots from jokerlfm  (%robot_status%)
+REM echo.
 set /P choose_menu=Choose a number: 
 if "%choose_menu%"=="1" (goto build)
 if "%choose_menu%"=="2" (goto open_modules)
-if "%choose_menu%"=="3" (goto install_sololfg)
-if "%choose_menu%"=="4" (goto install_robot)
+REM if "%choose_menu%"=="3" (goto install_sololfg)
+REM if "%choose_menu%"=="4" (goto install_robot)
 if "%choose_menu%"=="0" (goto reinstall_source)
 if "%choose_menu%"=="B" (goto build)
 if "%choose_menu%"=="" (goto menu)
@@ -185,11 +185,11 @@ cls
 echo Do you want to build the core?
 echo.
 echo 1 - Build
-echo 2 - Skip
+echo 0 - Skip
 echo.
 set /P choose_menu=Choose a number: 
 if "%choose_menu%"=="1" (goto build_yes)
-if "%choose_menu%"=="2" (goto copy_conf)
+if "%choose_menu%"=="0" (goto copy_conf)
 if "%choose_menu%"=="" (goto build)
 
 :build_yes
@@ -353,14 +353,15 @@ echo.
 echo Do you want to extract the data files from the game?
 echo.
 echo 1 - Extract
-echo 2 - Skip
+echo 0 - Skip
 echo.
-echo 0 - Change WoW path
+echo x - Change WoW path
 echo.
 set /P choose_menu=Choose a number: 
 if "%choose_menu%"=="1" (goto extract_data_yes)
-if "%choose_menu%"=="2" (goto end)
-if "%choose_menu%"=="0" (goto wow_path_empty)
+if "%choose_menu%"=="0" (goto end)
+if "%choose_menu%"=="x" (goto wow_path_empty)
+if "%choose_menu%"=="X" (goto wow_path_empty)
 if "%choose_menu%"=="" (goto extract_data)
 
 :extract_data_yes
