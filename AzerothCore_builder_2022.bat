@@ -1,4 +1,5 @@
 @echo off
+title AzerothCore Builder
 :start
 SET mainfolder=%CD%
 SET msbuildpath="%mainfolder%\Tools\VisualStudio2022\MSBuild\Current\Bin\msbuild.exe"
